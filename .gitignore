@@ -26,3 +26,12 @@
 *.exe
 *.out
 *.app
+
+# ignore everything
+/*
+
+# tracked files
+!.gitignore
+!LICENSE
+!README.md
+!/src
