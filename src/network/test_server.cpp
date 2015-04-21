@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include "epoll_reactor.h"
 #include <unistd.h>
+#include <signal.h>
+
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -10,7 +13,7 @@ int main(int argc, char* argv[])
     {
         printf("usage: server port\n");
         return 0;
-    }
+    }      
 
     epoll_reactor reactor;
     
@@ -26,7 +29,17 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    pause();
+    
+    while (1)
+    {
+        char data[1024];
+        memset(data, 0, 1024);
+        gets(data);
+
+        server.m_client->send_data(data, strlen(data));
+    }
+
+    //pause();
 
     return 0;
 }

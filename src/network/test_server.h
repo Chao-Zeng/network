@@ -4,32 +4,36 @@
 #include <unistd.h>
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 
 #include "epoll_reactor.h"
 #include "server_base.h"
 #include "socket_functions.h"
 #include "epoll_events_handler.h"
+#include "tcp_socket.h"
+#include "socket_events_handler.h"
 
-class tcp_connection : public epoll_events_handler
+class tcp_connection : socket_events_handler
 {
 public:
-    tcp_connection(int sockfd) : m_sockfd(sockfd)
+    tcp_connection(epoll_reactor* reactor, int sockfd) : m_tcp_socket(reactor, sockfd, this)
     {
-
+        
     }
+    
+    void handle_data()
+    {        
+        size_t data_length = m_tcp_socket.get_read_data_length();
 
-    void handle_read()
-    {
-        int buff_size = 2048;
-        char buff[2048] = {0};
-
-        int ret = read_all(m_sockfd, buff, buff_size);
-
-        if (0 == ret)
+        char *buff = (char *)malloc(data_length);
+        if (NULL == buff)
         {
-            printf("peer closed connection\n");
+            return;
         }
-        else if (ret < 0)
+        
+        if (!m_tcp_socket.read_data(buff, data_length))
         {
             printf("read data error\n");
         }
@@ -39,23 +43,34 @@ public:
         }
     }
 
+    void send_data(const char* str, size_t len)
+    {
+        m_tcp_socket.write_data(str, len);
+    }
+        
+    void handle_error()
+    {
+        printf("tcp socket error %d:%s\n", errno, strerror(errno));
+    }
+
+    void handle_hang_up()
+    {
+        printf("socket hang up\n");
+    }
+
     void handle_peer_closed()
     {
         printf("peer closed\n");
     }
 
-    void handle_write() {}
-    void handle_error() {}
-    void handle_hang_up() {}
-
 private:
-    int m_sockfd;
+    tcp_socket m_tcp_socket;
 };
 
 class test_server : public server_base
 {
 public:
-    test_server(epoll_reactor* reactor, short port) : server_base(reactor, port)
+    test_server(epoll_reactor* reactor, short port) : server_base(reactor, port), m_client(NULL)
     {
 
     }
@@ -65,12 +80,14 @@ public:
         printf("accept connection local %s:%d, peer %s:%d\n", get_local_ip(peer).c_str(), get_local_port(peer),
             get_peer_ip(peer).c_str(), get_peer_port(peer));
 
-        set_nonblocking(peer);
+       m_client = new tcp_connection(reactor(), peer);
 
-        tcp_connection* new_connection = new tcp_connection(peer);
-
-        reactor()->add(peer, EPOLLIN | EPOLLRDHUP, new_connection);
+        char* str = "welcome login";
+        m_client->send_data(str, strlen(str));
     }
+
+public:
+    tcp_connection* m_client;
 };
 
 

@@ -23,4 +23,10 @@ void set_blocking(int sockfd);
 // < 0, error
 int read_all(int sockfd, char* buff, size_t buff_size);
 
+//write all data to tcp cache
+//return vale
+// > 0, write bytes
+// <= 0, error
+int write_all(int sockfd, char* buff, size_t buff_size);
+
 #endif // _SOCKET_FUNCTIONS_H_

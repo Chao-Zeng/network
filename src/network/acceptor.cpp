@@ -42,6 +42,18 @@ bool acceptor::start()
         return false;
     }
 
+    //set linger
+    linger ling;
+    ling.l_onoff = 1;
+    ling.l_linger = 0;
+    if (0 != setsockopt(m_accept_socket, SOL_SOCKET, SO_LINGER, (const char*)&ling, sizeof(linger)))
+    {
+        close(m_accept_socket);
+        m_accept_socket = -1;
+        return false;
+    }
+    
+
     //set non-blocking
     if (0 != fcntl(m_accept_socket, F_SETFL, fcntl(m_accept_socket, F_GETFL, 0) | O_NONBLOCK))
     {

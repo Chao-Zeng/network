@@ -83,7 +83,7 @@ int read_all(int sockfd, char* buff, size_t buff_size)
 
         if (ret < 0 || 0 == ret)
         {
-            if (EAGAIN == errno)
+            if (EAGAIN == errno || EWOULDBLOCK == errno)
             {
                 break;
             } 
@@ -98,4 +98,37 @@ int read_all(int sockfd, char* buff, size_t buff_size)
     }
 
     return bytes_read;
+}
+
+int write_all(int sockfd, char* buff, size_t buff_size)
+{
+    char* pos = buff;
+    size_t bytes_write = 0;
+
+    while (1)
+    {
+        int ret = write(sockfd, pos, buff_size - bytes_write);
+
+        if (ret < 0 || 0 == ret)
+        {
+            if (EAGAIN == errno || EWOULDBLOCK == errno)
+            {
+                break;
+            }
+            else
+            {
+                return ret;
+            }
+        }
+
+        pos += ret;
+        bytes_write += ret;
+
+        if (bytes_write == buff_size)
+        {
+            break;
+        }
+    }
+
+    return bytes_write;
 }

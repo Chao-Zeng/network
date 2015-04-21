@@ -3,6 +3,9 @@
 // platform header
 #include <sys/epoll.h>
 #include <unistd.h>
+#include <signal.h>
+
+// C C++ header
 #include <stdint.h>
 #include <stddef.h>
 
@@ -59,6 +62,8 @@ bool epoll_reactor::run()
         m_run = false;
         return false;
     }
+
+    signal(SIGPIPE, SIG_IGN);
 
     return true;
 }
