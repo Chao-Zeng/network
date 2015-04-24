@@ -29,4 +29,8 @@ int read_all(int sockfd, char* buff, size_t buff_size);
 // <= 0, error
 int write_all(int sockfd, char* buff, size_t buff_size);
 
+// return vale
+// < 0, error, others connected socket fd
+int connect(const char* ip, short port);
+
 #endif // _SOCKET_FUNCTIONS_H_

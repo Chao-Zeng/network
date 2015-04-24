@@ -132,3 +132,25 @@ int write_all(int sockfd, char* buff, size_t buff_size)
 
     return bytes_write;
 }
+
+int connect(const char* ip, short port)
+{
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_fd < 0)
+    {
+        return -1;
+    }
+
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr(ip);
+    addr.sin_port = htons(port);
+
+    if (0 != connect(sock_fd, (struct sockaddr*)&addr, sizeof(addr)))
+    {
+        close(sock_fd);
+        return -1;
+    }
+
+    return sock_fd;
+}
