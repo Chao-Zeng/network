@@ -11,29 +11,19 @@
 
 server_base::server_base(epoll_reactor* reactor, short port) : m_reactor(reactor)
 {
-    m_acceptors[port] = new acceptor(port, this);
+    m_listen_ports.push_back(port);
 }
 
-server_base::server_base(epoll_reactor* reactor, std::vector<short> ports) : m_reactor(reactor)
+server_base::server_base(epoll_reactor* reactor, std::vector<short> ports) : m_reactor(reactor), m_listen_ports(ports)
 {
-    typedef std::vector<short>::iterator ite;
-    for (ite it = ports.begin(); it != ports.end(); ++it)
-    {
-        m_acceptors[*it] = new acceptor(*it, this);
-    }
+    
 }
 
 server_base::~server_base()
 {
     m_reactor = NULL;
-
-    typedef std::map<short, acceptor*>::iterator ite;
-    for (ite it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
-    {
-        delete it->second;
-    }
-
-    m_acceptors.clear();
+    m_listen_ports.clear();
+    stop();
 }
 
 epoll_reactor* server_base::reactor()
@@ -43,14 +33,19 @@ epoll_reactor* server_base::reactor()
 
 bool server_base::start()
 {
-    typedef std::map<short, acceptor*>::iterator ite;
-    for (ite it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
+    typedef std::vector<short>::iterator ite;
+    for (ite it = m_listen_ports.begin(); it != m_listen_ports.end(); ++it)
     {
-        if (!it->second->start())
+        acceptor* _acceptor = new acceptor(*it, this);
+
+        if (!_acceptor->start())
         {
+            delete _acceptor;
             stop();
             return false;
         }
+
+        m_acceptors[*it] = _acceptor;
     }
 
     return true;
@@ -61,6 +56,13 @@ void server_base::stop()
     typedef std::map<short, acceptor*>::iterator ite;
     for (ite it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
     {
-        it->second->stop();
+        if (NULL != it->second)
+        {
+            it->second->stop();
+            delete it->second;
+            it->second = NULL;
+        }
     }
+
+    m_acceptors.clear();
 }

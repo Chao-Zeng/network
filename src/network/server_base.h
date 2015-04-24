@@ -26,7 +26,14 @@ protected:
     virtual ~server_base();
 
 private:
+    // delete copy constructor
+    server_base(const server_base&);
+    // delete copy assignment
+    server_base& operator= (const server_base&);
+
+private:
     epoll_reactor* m_reactor;
+    std::vector<short> m_listen_ports;
     std::map<short, acceptor*> m_acceptors;
 };
 

@@ -22,6 +22,12 @@ private:
     void handle_hang_up();
 
 private:
+    // delete copy constructor
+    acceptor(const acceptor&);
+    // delete copy assignment
+    acceptor& operator= (const acceptor&);
+
+private:
     short m_listen_port;
     server_base* m_accept_handler;
     int m_accept_socket;    

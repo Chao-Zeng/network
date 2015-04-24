@@ -78,6 +78,12 @@ private:
     int operate(int op, int fd, uint32_t events, epoll_events_handler* events_handler);
 
 private:
+    // delete copy constructor
+    epoll_reactor(const epoll_reactor&);
+    // delete copy assignment
+    epoll_reactor& operator= (const epoll_reactor&);
+
+private:
     int m_epoll_fd;
     pthread_t m_thread_id;
     volatile bool m_run;

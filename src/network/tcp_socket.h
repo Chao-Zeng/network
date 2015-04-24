@@ -41,6 +41,12 @@ private:
     void handle_urgent_data() {}
 
 private:
+    // delete copy constructor
+    tcp_socket(const tcp_socket&);
+    // delete copy assignment
+    tcp_socket& operator= (const tcp_socket&);
+
+private:
     epoll_reactor* m_reactor;
     int m_socket;
     socket_events_handler* m_handler;
