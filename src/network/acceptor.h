@@ -5,7 +5,7 @@
 
 class server_base;
 
-class acceptor : private epoll_events_handler
+class acceptor : public epoll_events_handler
 {
 public:
     acceptor(short port, server_base* hander);
