@@ -5,11 +5,11 @@ export BUILD_DIR = $(shell echo `pwd`/build)
 all : network
 
 network :
-	$(MAKE) -C src
+	@$(MAKE) -C src
 
 test :
-	$(MAKE) -C test
+	@$(MAKE) -C test
 
 clean:
-	$(MAKE) -C clean
-	$(MAKE) -C clean
+	@cd src && $(MAKE) clean
+	#@cd test && $(MAKE) clean

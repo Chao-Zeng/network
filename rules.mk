@@ -3,10 +3,6 @@ DEP_DIR = $(BUILD_DIR)/dep
 LIB_DIR = $(BUILD_DIR)/lib
 TARGET_DIR = $(BUILD_DIR)
 
-DIRS = $(OBJ_DIR) $(DEP_DIR) $(LIB_DIR) $(TARGET_DIR)
-#$(DIRS):
-#	mkdir -p $@
-
 TARGET_SUFFIX = $(suffix $(TARGET))
 
 ifeq ($(TARGET_SUFFIX), .a)
@@ -46,10 +42,13 @@ endif
 all : $(C_DEPS) $(CPP_DEPS) $(TARGET_DIR)/$(TARGET)
 
 $(TARGET_DIR)/$(TARGET) : $(C_OBJS) $(CPP_OBJS)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^
 
-$(LIB_DIR)/$(TARGET_LIB) : $(C_OBJS) $(CPP_OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAGS) -o $@ $^
+clean :
+	$(RM) $(C_DEPS) $(CPP_DEPS)
+	$(RM) $(C_OBJS) $(CPP_OBJS)
+	$(RM) $(TARGET_DIR)/$(TARGET)
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(C_DEPS) $(CPP_DEPS)
@@ -58,6 +57,7 @@ endif
 $(DEP_DIR)/%.d : %.c
 	@echo GEN $@
 	@set -e; rm -f $@; \
+	mkdir -p $(dir $@); \
 	$(CC) -MM $< > $@.$$$$; \
 	sed 's,\(.*\)\.o[ :]*,$(OBJ_DIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
@@ -65,13 +65,16 @@ $(DEP_DIR)/%.d : %.c
 $(DEP_DIR)/%.d : %.cpp
 	@echo GEN $@
 	@set -e; rm -f $@; \
+	mkdir -p $(dir $@); \
 	$(CXX) -MM $< > $@.$$$$; \
 	sed 's,\(.*\)\.o[ :]*,$(OBJ_DIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 $(OBJ_DIR)/%.o : %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OBJ_DIR)/%.o : %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
