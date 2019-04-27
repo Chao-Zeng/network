@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "test_server.h"
-#include "../network/epoll_reactor.h"
+#include "network/epoll_reactor.h"
 
 int main(int argc, char* argv[])
 {

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 #include "test_client.h"
-#include "../network/socket_functions.h"
-#include "../network/epoll_reactor.h"
+#include "network/socket_functions.h"
+#include "network/epoll_reactor.h"
 
 int main(int argc, char* argv[])
 {
