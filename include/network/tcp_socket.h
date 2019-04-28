@@ -3,8 +3,8 @@
 
 #include <stddef.h>
 
-#include "epoll_events_handler.h"
-#include "cache_buffer.h"
+#include "network/epoll_events_handler.h"
+#include "network/cache_buffer.h"
 
 // forward declaration
 class epoll_reactor;

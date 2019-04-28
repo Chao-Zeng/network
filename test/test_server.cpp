@@ -34,12 +34,10 @@ int main(int argc, char* argv[])
     {
         char data[1024];
         memset(data, 0, 1024);
-        gets(data);
+        fgets(data, sizeof(data), stdin);
 
         server.m_client->send_data(data, strlen(data));
     }
-
-    //pause();
 
     return 0;
 }

@@ -1,4 +1,4 @@
-#include "tcp_socket.h"
+#include "network/tcp_socket.h"
 
 #include <unistd.h>
 
@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "epoll_reactor.h"
-#include "socket_functions.h"
-#include "socket_events_handler.h"
+#include "network/epoll_reactor.h"
+#include "network/socket_functions.h"
+#include "network/socket_events_handler.h"
 
 //this size should be greater than tcp buffer to guarantee read/write all data in one EPOLLIN/EPOLLOUT events
 static const size_t buff_size = 1024 * 4;

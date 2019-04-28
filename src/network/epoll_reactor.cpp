@@ -1,4 +1,4 @@
-#include "epoll_reactor.h"
+#include "network/epoll_reactor.h"
 
 // platform header
 #include <sys/epoll.h>
@@ -10,7 +10,7 @@
 #include <stddef.h>
 
 // project header
-#include "epoll_events_handler.h"
+#include "network/epoll_events_handler.h"
 
 epoll_reactor::epoll_reactor(int size) : m_epoll_fd(epoll_create(size)), m_thread_id(0), m_run(false)
 {

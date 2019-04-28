@@ -5,8 +5,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "../network/socket_events_handler.h"
-#include "../network/tcp_socket.h"
+#include "network/socket_events_handler.h"
+#include "network/tcp_socket.h"
 
 class epoll_reactor;
 

@@ -1,4 +1,4 @@
-#include "acceptor.h"
+#include "network/acceptor.h"
 
 //platform header
 #include <sys/types.h>
@@ -11,8 +11,8 @@
 #include <string.h>
 
 //project header
-#include "server_base.h"
-#include "epoll_reactor.h"
+#include "network/server_base.h"
+#include "network/epoll_reactor.h"
 
 acceptor::acceptor(short port, server_base* hander) : m_listen_port(port), m_accept_handler(hander), m_accept_socket(-1)
 {

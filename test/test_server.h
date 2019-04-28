@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "../network/epoll_reactor.h"
-#include "../network/server_base.h"
-#include "../network/socket_functions.h"
-#include "../network/epoll_events_handler.h"
-#include "../network/tcp_socket.h"
-#include "../network/socket_events_handler.h"
+#include "network/epoll_reactor.h"
+#include "network/server_base.h"
+#include "network/socket_functions.h"
+#include "network/epoll_events_handler.h"
+#include "network/tcp_socket.h"
+#include "network/socket_events_handler.h"
 
 class tcp_connection : socket_events_handler
 {
@@ -82,7 +82,7 @@ public:
 
        m_client = new tcp_connection(reactor(), peer);
 
-        char* str = "welcome login";
+        const char* str = "welcome login";
         m_client->send_data(str, strlen(str));
     }
 

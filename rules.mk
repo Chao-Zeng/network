@@ -26,12 +26,12 @@ C_DEPS := $(addprefix $(DEP_DIR)/, $(C_DEPS))
 CPP_DEPS = $(CPP_SRCS:.cpp=.d)
 CPP_DEPS := $(addprefix $(DEP_DIR)/, $(CPP_DEPS))
 
-INCLUDE_DIR += .
+INCLUDE_DIR += -I.
 
-CFLAGS = -g -Wall -I $(INCLUDE_DIR)
-CXXFLAGS = -g -Wall -I $(INCLUDE_DIR)
-LDFLAGS = -lpthread
-LIBFLAGS = -fPIC
+CFLAGS += -g -Wall $(INCLUDE_DIR)
+CXXFLAGS += -g -Wall $(INCLUDE_DIR)
+LDFLAGS += -lpthread
+LIBFLAGS += -fPIC
 
 ifdef IS_SO_LIB
 	CFLAGS += $(LIBFLAGS)
@@ -66,7 +66,7 @@ $(DEP_DIR)/%.d : %.cpp
 	@echo GEN $@
 	@set -e; rm -f $@; \
 	mkdir -p $(dir $@); \
-	$(CXX) -MM $< > $@.$$$$; \
+	$(CXX) -MM $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,\(.*\)\.o[ :]*,$(OBJ_DIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
