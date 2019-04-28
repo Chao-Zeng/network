@@ -58,7 +58,7 @@ $(DEP_DIR)/%.d : %.c
 	@echo GEN $@
 	@set -e; rm -f $@; \
 	mkdir -p $(dir $@); \
-	$(CC) -MM $< > $@.$$$$; \
+	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\(.*\)\.o[ :]*,$(OBJ_DIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
