@@ -1,0 +1,76 @@
+@startuml
+
+class epoll_reactor {
+    + int add()
+    + int modify()
+    + int remove()
+    + void interrupt()
+    + bool run()
+    + void stop()
+
+    - int m_epoll_fd
+    - pthread_t m_thread_id
+}
+
+class epoll_events_handler {
+    + void handle_events(uint32_t events)
+    # {abstract} virtual void handle_read() = 0;
+    # {abstract} virtual void handle_write() = 0;
+    # {abstract} virtual void handle_error() = 0;
+    # {abstract} virtual void handle_hang_up() = 0;
+    # {abstract} virtual void handle_peer_closed()
+    # {abstract} virtual void handle_urgent_data()
+}
+
+class socket_events_handler {
+    + {abstract} virtual void handle_data() = 0;
+    + {abstract} virtual void handle_error() = 0;
+    + {abstract} virtual void handle_hang_up() = 0;
+    + {abstract} virtual void handle_peer_closed() = 0;
+    + {abstract} virtual void handle_urgent_data()
+}
+
+class tcp_socket {
+    + int handle() const
+    + void close()
+    + size_t get_read_data_length()
+    + bool get_data(char* buff, size_t length)
+    + bool read_data(char* buff, size_t length)
+    + bool write_data(const char* buff, size_t length)
+
+    - epoll_reactor* m_reactor
+    - int m_socket
+    - socket_events_handler* m_handler
+    - cache_buffer m_read_cache
+    - cache_buffer m_write_cache
+}
+
+epoll_events_handler <|-- tcp_socket 
+tcp_socket o-- epoll_reactor
+tcp_socket o-- socket_events_handler
+
+class acceptor {
+    + bool start()
+    + void stop()
+
+    - short m_listen_port
+    - server_base* m_accept_handler
+    - int m_accept_socket
+}
+
+epoll_events_handler <|-- acceptor
+
+class server_base {
+    + epoll_reactor* reactor()
+    + bool start()
+    + void stop()
+    + {abstract} virtual void handle_new_connection(int peer) = 0
+
+    - epoll_reactor* m_reactor
+    - std::vector<short> m_listen_ports
+    - std::map<short, acceptor*> m_acceptors
+}
+
+server_base "1" *-- "many" acceptor : contains
+
+@enduml
